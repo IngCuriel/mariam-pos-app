@@ -141,8 +141,9 @@ export default function ProductsScreen() {
 
   const handleAddToCart = (
     product: Product,
-    presentation?: { id: string; name: string; unitPrice: number }
+    presentation?: { id: string; name: string; unitPrice: number; quantity: number }
   ) => {
+    console.log('presentation', presentation);
     const basePrice = presentation?.unitPrice || product.price;
     // Comparar de forma case-insensitive para mayor robustez
     const isGranel = product.saleType?.toLowerCase() === 'granel';
@@ -165,7 +166,7 @@ export default function ProductsScreen() {
         productName: product.name,
         presentationId: presentation?.id,
         presentationName: presentation?.name,
-        quantity: 1,
+        quantity: presentation?.quantity || 1,
         unitPrice: basePrice,
         saleType: normalizedSaleType,
         basePrice: basePrice,
@@ -336,7 +337,7 @@ export default function ProductsScreen() {
                   <ThemedText
                     style={[styles.presentationPrice, isDark && styles.presentationPriceDark]}
                   >
-                    {formatCurrency(presentation.unitPrice)}
+                    {formatCurrency(presentation.quantity * presentation.unitPrice)}
                   </ThemedText>
                 </View>
                 <TouchableOpacity

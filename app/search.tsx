@@ -135,7 +135,7 @@ export default function SearchScreen() {
 
   const handleAddToCart = (
     product: Product,
-    presentation?: { id: string; name: string; unitPrice: number }
+    presentation?: { id: string; name: string; unitPrice: number, quantity: number }
   ) => {
     const basePrice = presentation?.unitPrice || product.price;
     const isGranel = product.saleType?.toLowerCase() === 'granel';
@@ -155,8 +155,8 @@ export default function SearchScreen() {
         productName: product.name,
         presentationId: presentation?.id?.toString(),
         presentationName: presentation?.name,
-        quantity: 1,
-        unitPrice: basePrice,
+        quantity: presentation?.quantity || 1,
+        unitPrice:  basePrice,
         saleType: normalizedSaleType,
         basePrice: basePrice,
       });
@@ -322,7 +322,7 @@ export default function SearchScreen() {
                     {presentation.name}
                   </ThemedText>
                   <ThemedText style={[styles.presentationPrice, isDark && styles.presentationPriceDark]}>
-                    {formatCurrency(presentation.unitPrice)}
+                    {formatCurrency(presentation.quantity * presentation.unitPrice)}
                   </ThemedText>
                 </View>
                 <TouchableOpacity
