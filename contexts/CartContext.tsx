@@ -121,21 +121,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prevItems) =>
       prevItems.map((item) => {
         if (item.productId === productId && item.presentationId === presentationId) {
-          // Si es granel y tiene basePrice, usar basePrice para calcular
-          if (item.saleType === 'Granel' && item.basePrice) {
-            return {
-              ...item,
-              quantity,
-              total: quantity * item.basePrice,
-              unitPrice: item.basePrice, // Mantener precio base
-            };
-          } else {
-            return {
-              ...item,
-              quantity,
-              total: quantity * item.unitPrice,
-            };
-          }
+          // Usar basePrice si existe (para granel o presentaciones), sino usar unitPrice
+          const priceToUse = item.basePrice || item.unitPrice;
+          return {
+            ...item,
+            quantity,
+            total: quantity * priceToUse,
+            unitPrice: priceToUse, // Mantener el precio unitario (que es el total de la presentación)
+          };
         }
         return item;
       })

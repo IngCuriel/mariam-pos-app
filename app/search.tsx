@@ -137,7 +137,16 @@ export default function SearchScreen() {
     product: Product,
     presentation?: { id: string; name: string; unitPrice: number, quantity: number }
   ) => {
-    const basePrice = presentation?.unitPrice || product.price;
+    // Si hay presentación, el precio unitario es el TOTAL de la presentación (quantity * unitPrice)
+    // Si no hay presentación, usar el precio del producto
+    let basePrice: number;
+    if (presentation) {
+      // El precio unitario es el total de la presentación completa
+      basePrice = presentation.quantity * presentation.unitPrice;
+    } else {
+      basePrice = product.price;
+    }
+    
     const isGranel = product.saleType?.toLowerCase() === 'granel';
 
     if (isGranel) {
@@ -155,10 +164,10 @@ export default function SearchScreen() {
         productName: product.name,
         presentationId: presentation?.id?.toString(),
         presentationName: presentation?.name,
-        quantity: presentation?.quantity || 1,
-        unitPrice:  basePrice,
+        quantity: 1, // Siempre agregar 1 presentación completa
+        unitPrice: basePrice, // Precio total de la presentación
         saleType: normalizedSaleType,
-        basePrice: basePrice,
+        basePrice: basePrice, // Guardar el precio total de la presentación como basePrice
       });
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

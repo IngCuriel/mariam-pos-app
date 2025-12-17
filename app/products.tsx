@@ -144,7 +144,17 @@ export default function ProductsScreen() {
     presentation?: { id: string; name: string; unitPrice: number; quantity: number }
   ) => {
     console.log('presentation', presentation);
-    const basePrice = presentation?.unitPrice || product.price;
+    
+    // Si hay presentación, el precio unitario es el TOTAL de la presentación (quantity * unitPrice)
+    // Si no hay presentación, usar el precio del producto
+    let basePrice: number;
+    if (presentation) {
+      // El precio unitario es el total de la presentación completa
+      basePrice = presentation.quantity * presentation.unitPrice;
+    } else {
+      basePrice = product.price;
+    }
+    
     // Comparar de forma case-insensitive para mayor robustez
     const isGranel = product.saleType?.toLowerCase() === 'granel';
 
@@ -166,10 +176,10 @@ export default function ProductsScreen() {
         productName: product.name,
         presentationId: presentation?.id,
         presentationName: presentation?.name,
-        quantity: presentation?.quantity || 1,
-        unitPrice: basePrice,
+        quantity: 1, // Siempre agregar 1 presentación completa
+        unitPrice: basePrice, // Precio total de la presentación
         saleType: normalizedSaleType,
-        basePrice: basePrice,
+        basePrice: basePrice, // Guardar el precio total de la presentación como basePrice
       });
 
       // Haptic feedback
@@ -185,6 +195,8 @@ export default function ProductsScreen() {
   const handleGranelAddToCart = () => {
     if (!selectedProduct) return;
 
+    // Si hay presentación, usar el precio unitario de la presentación (no el total)
+    // Para granel, el usuario ingresa el precio total manualmente
     const basePrice = selectedPresentation?.unitPrice || selectedProduct.price;
 
     // Validar que se haya ingresado un precio total
