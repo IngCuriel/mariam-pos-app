@@ -1,12 +1,28 @@
 import axios from "axios";
-// Cambia esta URL por la de tu backend
-const API_URL = 'http://192.168.0.8:3001';
-// const API_URL = 'http://localhost:3001';  
-// const API_URL = 'https://mariam-pos-api-papeleria.onrender.com';
+import { getApiUrl, getDefaultApiUrl } from "../../utils/apiConfig";
 
+// URL por defecto (se actualizará cuando se cargue la configuración)
+let API_URL = getDefaultApiUrl();
+
+// Crear el cliente axios con la URL por defecto
 const axiosClient = axios.create({
   baseURL: API_URL + "/api",
   timeout: 10000,
+});
+
+// Función para actualizar la URL de la API dinámicamente
+export const updateApiUrl = async (newUrl) => {
+  API_URL = newUrl;
+  axiosClient.defaults.baseURL = API_URL + "/api";
+};
+
+export const getCurrentApiUrl = () => API_URL;
+
+// Inicializar la URL de la API al cargar el módulo
+getApiUrl().then((url) => {
+  API_URL = url;
+  // Actualizar el baseURL del cliente axios
+  axiosClient.defaults.baseURL = API_URL + "/api";
 });
 
 axiosClient.interceptors.request.use((config) => {

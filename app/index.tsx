@@ -14,6 +14,7 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const isDark = colorScheme === 'dark';
   const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  const settingsScaleAnim = React.useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -32,6 +33,30 @@ export default function WelcomeScreen() {
       tension: 300,
       friction: 10,
     }).start();
+  };
+
+  const handleSettingsPressIn = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Animated.spring(settingsScaleAnim, {
+      toValue: 0.9,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
+  const handleSettingsPressOut = () => {
+    Animated.spring(settingsScaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
+  const handleSettingsPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push('/settings');
   };
 
   // Colores del logo Mini Super Curiel
@@ -120,6 +145,29 @@ export default function WelcomeScreen() {
               </Animated.View>
             </Pressable>
           </Link>
+
+          {/* Botón de configuración */}
+          <Pressable
+            onPressIn={handleSettingsPressIn}
+            onPressOut={handleSettingsPressOut}
+            onPress={handleSettingsPress}
+            style={styles.settingsButtonWrapper}
+          >
+            <Animated.View
+              style={[
+                styles.settingsButtonContainer,
+                { transform: [{ scale: settingsScaleAnim }] },
+              ]}
+            >
+              <View style={styles.settingsButtonInner}>
+                <IconSymbol
+                  name="gearshape.fill"
+                  size={24}
+                  color="#fff"
+                />
+              </View>
+            </Animated.View>
+          </Pressable>
         </View>
       </LinearGradient>
     </View>
@@ -246,6 +294,33 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     backgroundColor: 'rgba(220, 20, 60, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingsButtonWrapper: {
+    marginTop: 24,
+    alignItems: 'center',
+  },
+  settingsButtonContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  settingsButtonInner: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
